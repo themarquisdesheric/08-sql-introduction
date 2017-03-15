@@ -104,7 +104,7 @@ app.put('/articles/:id', function(request, response) {
 });
 
 app.delete('/articles/:id', function(request, response) {
-  // NOTE: This route is called by Article.prototype.deleteRecord. It passes an ID referencing the specific article to be deleted (request.params.id). Again, protection against SQL injection is used. If successful, it returns 'Delete complete'. Otherwise, it logs the error object.
+  // DONE NOTE: This route is called by Article.prototype.deleteRecord. It passes an ID referencing the specific article to be deleted (request.params.id). Again, protection against SQL injection is used. If successful, it returns 'Delete complete'. Otherwise, it logs the error object.
   client.query(
     `DELETE FROM articles WHERE article_id=$1;`,
     [request.params.id]
@@ -118,7 +118,7 @@ app.delete('/articles/:id', function(request, response) {
 });
 
 app.delete('/articles', function(request, response) {
-  // NOTE:
+  // NOTE: This route is called by Article.truncateTable. It deletes the entire articles table, and if successful, returns the response 'Delete complete'.
   client.query(
     'DELETE FROM articles;'
   )
@@ -130,7 +130,7 @@ app.delete('/articles', function(request, response) {
   });
 });
 
-// NOTE:
+// NOTE: This calls the loadDB function, defined on line 163 below. 
 loadDB();
 
 app.listen(PORT, function() {
@@ -141,7 +141,7 @@ app.listen(PORT, function() {
 //////// ** DATABASE LOADER ** ////////
 ////////////////////////////////////////
 function loadArticles() {
-  // NOTE:
+  // NOTE: This function begins by querying the articles table and having it return its number of rows. If there are rows, nothing happens. If there are no rows, it goes into the filesystem using the FS module (that was required at the top of this file) and writes each article into the articles table. 
   client.query('SELECT COUNT(*) FROM articles')
   .then(result => {
     if(!parseInt(result.rows[0].count)) {
@@ -161,7 +161,7 @@ function loadArticles() {
 }
 
 function loadDB() {
-  // NOTE:
+  // NOTE: This creates the SQL table if one does not already exist. It specifies the column headers (table schema) and constraints for each column header's type and length. If the table is successfully created, it will then run loadArticles() to populate the table.
   client.query(`
     CREATE TABLE IF NOT EXISTS articles (
       article_id SERIAL PRIMARY KEY,
